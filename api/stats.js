@@ -23,7 +23,7 @@ function getToday() {
 function fetchAvailableLogs(datePath) {
   return new Promise((resolve, reject) => {
     const req = http.get(
-      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/ritux_logs/${datePath}`, timeout: 10_000 },
+      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/ritux_logs/${datePath}`, timeout: 10_000, insecureHTTPParser: true },
       (res) => {
         const chunks = [];
         res.on("data", (c) => chunks.push(c));
@@ -46,7 +46,7 @@ function fetchAvailableLogs(datePath) {
 function fetchLog(datePath, logFile) {
   return new Promise((resolve, reject) => {
     const req = http.get(
-      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/download_ritux_log/${datePath}/${logFile}`, timeout: 20_000 },
+      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/download_ritux_log/${datePath}/${logFile}`, timeout: 20_000, insecureHTTPParser: true },
       (res) => {
         const chunks = [];
         res.on("data", (c) => chunks.push(c));
