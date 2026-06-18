@@ -73,6 +73,9 @@ tr.new-row td { animation: flash 1.5s ease-out; }
 .banner { font-size: 11px; color: #888; margin-bottom: 20px; padding: 8px 12px; background: #eee; border-left: 3px solid #16a34a; }
 .banner b { color: #555; }
 .footer { font-size: 10px; color: #aaa; margin-top: 32px; text-align: center; }
+.offline-banner { background: #fef2f2; border: 1px solid #fecaca; padding: 14px 16px; margin-bottom: 24px; display: none; color: #666; font-size: 12px; }
+.offline-banner.show { display: block; }
+.offline-banner b { color: #dc2626; }
 .map-container { width: 100%; height: 220px; margin-bottom: 24px; border: 1px solid #ddd; }
 .map-container iframe { width: 100%; height: 100%; border: 0; }
 .fastest-box { background: #fff3f3; border: 1px solid #fecaca; padding: 14px 16px; margin-bottom: 24px; display: none; }
@@ -96,6 +99,10 @@ tr.new-row td { animation: flash 1.5s ease-out; }
 
 <div class="banner">
   <b>como funciona:</b> esse radar tem o painel de controle aberto na internet. a gente puxa os logs de detecção em tempo real e calcula quanto o governo tá faturando só com essa esquina.
+</div>
+
+<div class="offline-banner" id="offlineBanner">
+  <b>📡 câmera offline</b> — o IP do radar (191.246.88.18:5000) não está respondendo. pode ser manutenção, queda de link, ou bloquearam o acesso. quando voltar, os dados carregam automaticamente.
 </div>
 
 <div class="fastest-box" id="fastestBox">
@@ -386,6 +393,9 @@ async function update() {
     const stale = ago > 90;
     const scrapeOk = !d.lastError;
 
+    const offline = !scrapeOk || s.totalVehicles === 0;
+    document.getElementById('offlineBanner').classList.toggle('show', offline);
+
     if (!scrapeOk) {
       document.getElementById('dot').className = 'dot';
       document.getElementById('statusText').textContent = `scrape falhou — último sucesso ${ago}s atrás`;
@@ -398,6 +408,7 @@ async function update() {
     }
   } catch (e) {
     document.getElementById('dot').className = 'dot';
+    document.getElementById('offlineBanner').classList.add('show');
     document.getElementById('statusText').textContent = `server offline`;
   }
 }
