@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>radar-receita</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #111;
+  color: #ccc;
+  font: 13px/1.6 'SF Mono', 'Menlo', 'Consolas', monospace;
+  padding: 32px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+h1 { font-size: 14px; color: #666; font-weight: normal; margin-bottom: 24px; }
+h1 b { color: #ccc; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: #222; border: 1px solid #222; margin-bottom: 24px; }
+.cell { background: #111; padding: 12px 16px; }
+.cell .label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+.cell .val { font-size: 22px; color: #fff; font-weight: bold; margin-top: 2px; }
+.cell .val.green { color: #4ade80; }
+.cell .val.red { color: #f87171; }
+.cell .val.yellow { color: #fbbf24; }
+.cell .sub { font-size: 11px; color: #555; margin-top: 2px; }
+section { margin-bottom: 24px; }
+section h2 { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 4px 12px 4px 0; font-size: 12px; border-bottom: 1px solid #1a1a1a; }
+th { color: #444; font-weight: normal; }
+td { color: #999; }
+td.speed { font-variant-numeric: tabular-nums; }
+.violation { color: #f87171; font-weight: bold; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+.bar-label { width: 60px; color: #555; text-align: right; }
+.bar-track { flex: 1; height: 8px; background: #1a1a1a; }
+.bar-fill { height: 100%; background: #333; }
+.bar-val { width: 50px; color: #666; font-variant-numeric: tabular-nums; }
+.status { font-size: 11px; color: #333; margin-top: 16px; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #333; margin-right: 4px; }
+.dot.on { background: #4ade80; }
+.dot.warn { background: #fbbf24; }
+</style>
+</head>
+<body>
+
+<h1><b>radar-receita</b> — av. ruy rodriguez x terminal santa lucia, campinas-sp</h1>
+
+<div class="grid">
+  <div class="cell">
+    <div class="label">veiculos hoje</div>
+    <div class="val" id="total">—</div>
+    <div class="sub" id="perHour">—/h</div>
+  </div>
+  <div class="cell">
+    <div class="label">receita estimada</div>
+    <div class="val green" id="revenue">—</div>
+    <div class="sub" id="revenueYear">—/ano projecao</div>
+  </div>
+  <div class="cell">
+    <div class="label">multas velocidade</div>
+    <div class="val yellow" id="speedFines">—</div>
+    <div class="sub" id="speedBreak">—</div>
+  </div>
+  <div class="cell">
+    <div class="label">ciclos sinal vermelho</div>
+    <div class="val red" id="redLight">—</div>
+    <div class="sub">~15% geram multa</div>
+  </div>
+  <div class="cell">
+    <div class="label">vel. media</div>
+    <div class="val" id="avgSpeed">—</div>
+    <div class="sub">limite: 50 km/h</div>
+  </div>
+  <div class="cell">
+    <div class="label">vel. maxima</div>
+    <div class="val red" id="maxSpeed">—</div>
+    <div class="sub" id="maxFine">—</div>
+  </div>
+</div>
+
+<section>
+  <h2>volume por hora</h2>
+  <div id="hourChart"></div>
+</section>
+
+<section>
+  <h2>perfil dos veiculos</h2>
+  <div id="profileChart"></div>
+</section>
+
+<section>
+  <h2>feed ao vivo — ultimos 30 veiculos</h2>
+  <table>
+    <thead><tr><th>hora</th><th>fx</th><th>vel</th><th>perfil</th><th>tam</th><th></th></tr></thead>
+    <tbody id="feed"></tbody>
+  </table>
+</section>
+
+<div class="status">
+  <span class="dot" id="dot"></span>
+  <span id="statusText">conectando...</span>
+</div>
+
+<script>
+async function update() {
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    const s = d.stats;
+
+    document.getElementById('total').textContent = s.totalVehicles.toLocaleString('pt-BR');
+
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes() / 60;
+    const rate = h > 0 ? Math.round(s.totalVehicles / h) : 0;
+    document.getElementById('perHour').textContent = rate.toLocaleString('pt-BR') + '/h';
+
+    document.getElementById('revenue').textContent = 'R$ ' + s.estimatedRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+
+    const daily = s.estimatedRevenue * (24 / (h || 1));
+    const yearly = daily * 365;
+    document.getElementById('revenueYear').textContent = 'R$ ' + Math.round(yearly / 1000).toLocaleString('pt-BR') + 'k/ano projecao';
+
+    const totalSpeed = s.speedViolations.up20 + s.speedViolations.up50 + s.speedViolations.over50;
+    document.getElementById('speedFines').textContent = totalSpeed;
+    document.getElementById('speedBreak').textContent = s.speedViolations.up20 + ' leve / ' + s.speedViolations.up50 + ' grave / ' + s.speedViolations.over50 + ' gravissima';
+
+    document.getElementById('redLight').textContent = s.redLightCycles.toLocaleString('pt-BR');
+    document.getElementById('avgSpeed').textContent = s.avgSpeed + ' km/h';
+    document.getElementById('maxSpeed').textContent = s.maxSpeed + ' km/h';
+
+    const maxConsidered = s.maxSpeed - d.tolerance;
+    if (maxConsidered > d.speedLimit) {
+      const pct = ((maxConsidered - d.speedLimit) / d.speedLimit * 100).toFixed(0);
+      document.getElementById('maxFine').textContent = pct + '% acima do limite';
+    }
+
+    // hour chart
+    const hours = Object.entries(s.vehiclesPerHour).sort((a, b) => a[0].localeCompare(b[0]));
+    const maxH = Math.max(...hours.map(h => h[1]), 1);
+    document.getElementById('hourChart').innerHTML = hours.map(([h, v]) =>
+      `<div class="bar-row"><div class="bar-label">${h}h</div><div class="bar-track"><div class="bar-fill" style="width:${(v/maxH*100)}%"></div></div><div class="bar-val">${v}</div></div>`
+    ).join('');
+
+    // profile chart
+    const profs = Object.entries(s.profiles).sort((a, b) => b[1] - a[1]);
+    const maxP = Math.max(...profs.map(p => p[1]), 1);
+    document.getElementById('profileChart').innerHTML = profs.map(([p, v]) =>
+      `<div class="bar-row"><div class="bar-label">${p}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/maxP*100)}%"></div></div><div class="bar-val">${v}</div></div>`
+    ).join('');
+
+    // feed
+    document.getElementById('feed').innerHTML = d.recentFeed.map(v => {
+      const cls = v.violation ? ' class="violation"' : '';
+      const tag = v.violation ? `<span class="violation">${v.violation}</span>` : '';
+      return `<tr><td>${v.time}</td><td>${v.lane}</td><td class="speed"${cls}>${v.speed} km/h</td><td>${v.profile}</td><td>${v.size}m</td><td>${tag}</td></tr>`;
+    }).join('');
+
+    const ago = Math.round((Date.now() - new Date(d.lastScrape).getTime()) / 1000);
+    const stale = ago > 90;
+    const scrapeOk = !d.lastError;
+
+    if (!scrapeOk) {
+      document.getElementById('dot').className = 'dot';
+      document.getElementById('statusText').textContent = `scrape falhou: ${d.lastError} — ultimo sucesso ${ago}s atras`;
+    } else if (stale) {
+      document.getElementById('dot').className = 'dot warn';
+      document.getElementById('statusText').textContent = `dados possivelmente stale — ultimo scrape ${ago}s atras`;
+    } else {
+      document.getElementById('dot').className = 'dot on';
+      document.getElementById('statusText').textContent = `live — scrape ${ago}s atras — ${d.today}`;
+    }
+  } catch (e) {
+    document.getElementById('dot').className = 'dot';
+    document.getElementById('statusText').textContent = `server offline: ${e.message}`;
+  }
+}
+
+update();
+setInterval(update, 5000);
+</script>
+</body>
+</html>
