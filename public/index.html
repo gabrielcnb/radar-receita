@@ -318,7 +318,8 @@ async function update() {
 
     const daily = s.estimatedRevenue * (24 / (h || 1));
     const yearly = daily * 365;
-    document.getElementById('revenueYear').textContent = 'R$ ' + Math.round(yearly / 1000).toLocaleString('pt-BR') + 'k/ano projeção';
+    const yrM = (yearly / 1_000_000).toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    document.getElementById('revenueYear').textContent = 'R$ ' + yrM + ' milhões/ano projeção';
 
     const totalSpeed = s.speedViolations.up20 + s.speedViolations.up50 + s.speedViolations.over50;
     document.getElementById('speedFines').textContent = totalSpeed;
