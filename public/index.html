@@ -7,69 +7,81 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  background: #fafaf9;
-  color: #1a1a1a;
+  background: #f5f5f4;
+  color: #111;
   font: 13px/1.6 'SF Mono', 'Menlo', 'Consolas', monospace;
   padding: 32px;
   max-width: 860px;
   margin: 0 auto;
 }
-h1 { font-size: 14px; color: #888; font-weight: normal; margin-bottom: 4px; }
-h1 b { color: #1a1a1a; }
-.subtitle { font-size: 11px; color: #aaa; margin-bottom: 24px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: #e5e5e5; border: 1px solid #e5e5e5; margin-bottom: 24px; }
-.cell { background: #fafaf9; padding: 12px 16px; transition: background 0.2s; cursor: default; }
-.cell:hover { background: #f5f5f4; }
-.cell .label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; }
-.cell .desc { font-size: 10px; color: #bbb; margin-top: -1px; }
-.cell .val { font-size: 22px; color: #1a1a1a; font-weight: bold; margin-top: 2px; }
+h1 { font-size: 14px; color: #555; font-weight: normal; margin-bottom: 4px; }
+h1 b { color: #111; }
+.subtitle { font-size: 11px; color: #888; margin-bottom: 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: #ddd; border: 1px solid #ddd; margin-bottom: 24px; }
+.cell { background: #f5f5f4; padding: 12px 16px; transition: background 0.2s; cursor: default; }
+.cell:hover { background: #eee; }
+.cell .label { font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 1px; }
+.cell .desc { font-size: 10px; color: #999; margin-top: -1px; }
+.cell .val { font-size: 22px; color: #111; font-weight: bold; margin-top: 2px; }
 .cell .val.green { color: #16a34a; }
 .cell .val.red { color: #dc2626; }
-.cell .val.yellow { color: #ca8a04; }
-.cell .sub { font-size: 11px; color: #999; margin-top: 2px; }
+.cell .val.yellow { color: #a16207; }
+.cell .sub { font-size: 11px; color: #777; margin-top: 2px; }
 .delta { font-size: 11px; color: #16a34a; margin-left: 6px; font-weight: normal; opacity: 0; transition: opacity 0.3s; }
 .delta.show { opacity: 1; }
 .delta.neg { color: #dc2626; }
 section { margin-bottom: 24px; }
-section h2 { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-.filter-hint { font-size: 11px; color: #ccc; margin-left: 8px; font-weight: normal; text-transform: none; letter-spacing: 0; }
+section h2 { font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.filter-hint { font-size: 11px; color: #aaa; margin-left: 8px; font-weight: normal; text-transform: none; letter-spacing: 0; }
 .filter-active { color: #16a34a; }
-.filter-clear { color: #999; cursor: pointer; margin-left: 8px; font-size: 11px; }
-.filter-clear:hover { color: #1a1a1a; }
+.filter-clear { color: #777; cursor: pointer; margin-left: 8px; font-size: 11px; }
+.filter-clear:hover { color: #111; }
 table { width: 100%; border-collapse: collapse; }
-th, td { text-align: left; padding: 4px 12px 4px 0; font-size: 12px; border-bottom: 1px solid #f0f0ef; }
-th { color: #bbb; font-weight: normal; cursor: pointer; user-select: none; transition: color 0.15s; }
-th:hover { color: #666; }
-th.sorted { color: #1a1a1a; }
+th, td { text-align: left; padding: 4px 12px 4px 0; font-size: 12px; border-bottom: 1px solid #e5e5e5; }
+th { color: #999; font-weight: normal; cursor: pointer; user-select: none; transition: color 0.15s; }
+th:hover { color: #555; }
+th.sorted { color: #111; }
 th .arrow { font-size: 10px; margin-left: 2px; }
-td { color: #666; }
+td { color: #444; }
 td.speed { font-variant-numeric: tabular-nums; }
 .violation { color: #dc2626; font-weight: bold; }
 .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; cursor: pointer; transition: opacity 0.15s; }
 .bar-row:hover { opacity: 1 !important; }
-.bar-row:hover .bar-fill { background: #999; }
+.bar-row:hover .bar-fill { background: #888; }
 .bar-row.active .bar-fill { background: #16a34a; }
 .bar-row.active .bar-label, .bar-row.active .bar-val { color: #16a34a; }
 .bar-row.dimmed { opacity: 0.3; }
-.bar-label { width: 60px; color: #999; text-align: right; transition: color 0.15s; }
-.bar-track { flex: 1; height: 8px; background: #ececec; position: relative; }
-.bar-fill { height: 100%; background: #ccc; transition: background 0.15s, width 0.4s ease-out; }
-.bar-pct { position: absolute; right: 4px; top: -14px; font-size: 10px; color: #999; opacity: 0; transition: opacity 0.15s; }
+.bar-label { width: 60px; color: #777; text-align: right; transition: color 0.15s; }
+.bar-track { flex: 1; height: 8px; background: #e0e0e0; position: relative; }
+.bar-fill { height: 100%; background: #bbb; transition: background 0.15s, width 0.4s ease-out; }
+.bar-pct { position: absolute; right: 4px; top: -14px; font-size: 10px; color: #888; opacity: 0; transition: opacity 0.15s; }
 .bar-row:hover .bar-pct { opacity: 1; }
-.bar-val { width: 50px; color: #999; font-variant-numeric: tabular-nums; transition: color 0.15s; }
-.status { font-size: 11px; color: #ccc; margin-top: 16px; }
-.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ddd; margin-right: 4px; }
+.bar-val { width: 50px; color: #777; font-variant-numeric: tabular-nums; transition: color 0.15s; }
+.status { font-size: 11px; color: #aaa; margin-top: 16px; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ccc; margin-right: 4px; }
 .dot.on { background: #16a34a; }
-.dot.warn { background: #ca8a04; }
+.dot.warn { background: #a16207; }
 tr.new-row td { animation: flash 1.5s ease-out; }
-@keyframes flash { 0% { color: #16a34a; } 100% { color: #666; } }
+@keyframes flash { 0% { color: #16a34a; } 100% { color: #444; } }
 .feed-filter { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-.feed-tag { font-size: 11px; padding: 2px 8px; background: #f0f0ef; color: #999; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
-.feed-tag:hover { color: #666; border-color: #ddd; }
-.feed-tag.active { color: #1a1a1a; border-color: #bbb; background: #e5e5e5; }
-.banner { font-size: 11px; color: #bbb; margin-bottom: 20px; padding: 8px 12px; background: #f5f5f4; border-left: 3px solid #16a34a; }
-.banner b { color: #888; }
-.footer { font-size: 10px; color: #ccc; margin-top: 32px; text-align: center; }
+.feed-tag { font-size: 11px; padding: 2px 8px; background: #e5e5e5; color: #777; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+.feed-tag:hover { color: #444; border-color: #ccc; }
+.feed-tag.active { color: #111; border-color: #999; background: #ddd; }
+.banner { font-size: 11px; color: #888; margin-bottom: 20px; padding: 8px 12px; background: #eee; border-left: 3px solid #16a34a; }
+.banner b { color: #555; }
+.footer { font-size: 10px; color: #aaa; margin-top: 32px; text-align: center; }
+.fastest-box { background: #fff3f3; border: 1px solid #fecaca; padding: 14px 16px; margin-bottom: 24px; display: none; }
+.fastest-box.show { display: flex; align-items: center; gap: 16px; }
+.fastest-text { flex: 1; }
+.fastest-title { font-size: 13px; color: #dc2626; font-weight: bold; }
+.fastest-details { font-size: 11px; color: #666; margin-top: 4px; }
+.fastest-speed { font-size: 28px; font-weight: bold; color: #dc2626; white-space: nowrap; }
+.fastest-emoji { font-size: 32px; animation: shake 0.5s infinite; }
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
 </style>
 </head>
 <body>
@@ -79,6 +91,15 @@ tr.new-row td { animation: flash 1.5s ease-out; }
 
 <div class="banner">
   <b>como funciona:</b> esse radar tem o painel de controle aberto na internet. a gente puxa os logs de detecção em tempo real e calcula quanto o governo tá faturando só com essa esquina.
+</div>
+
+<div class="fastest-box" id="fastestBox">
+  <div class="fastest-emoji">🚨</div>
+  <div class="fastest-text">
+    <div class="fastest-title" id="fastestTitle">—</div>
+    <div class="fastest-details" id="fastestDetails">—</div>
+  </div>
+  <div class="fastest-speed" id="fastestSpeed">—</div>
 </div>
 
 <div class="grid">
@@ -166,6 +187,19 @@ let prevFeedKeys = new Set();
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
 function num(n) { return Number.isFinite(n) ? n : 0; }
 
+const FASTEST_MSGS = [
+  "BRIAN, É VOCÊ???",
+  "ACHOU QUE ERA O VELOCIRAPTOR",
+  "PILOTO DE FUGA DO CRIME",
+  "ATRASADO PRO TRABALHO",
+  "NAMORADA LIGOU: \"CADÊ VOCÊ?\"",
+  "ACHANDO QUE TÁ NA INTERLAGOS",
+  "CORRE QUE O RADAR É POP",
+  "SENNA QUE NÃO ERA",
+  "RAPIDO E MULTADO",
+  "FREIO É COISA DO PASSADO",
+];
+
 function showDelta(id, cur, old) {
   const el = document.getElementById(id);
   if (!el || !old) return;
@@ -206,7 +240,7 @@ function renderFeed(data, newKeys) {
   if (hourFilter || profileFilter) {
     const parts = [];
     if (hourFilter) parts.push(hourFilter + 'h');
-    if (profileFilter === '__violations') parts.push('multas');
+    if (profileFilter === '__violations') parts.push('infrações');
     else if (profileFilter) parts.push(profileFilter);
     hint.innerHTML = `<span class="filter-active">${parts.join(' + ')}</span> — ${count} veículos <span class="filter-clear" onclick="clearFilters()">[limpar]</span>`;
   } else {
@@ -234,6 +268,22 @@ function setupSort() {
       renderFeed(feedData);
     });
   });
+}
+
+function updateFastest(stats) {
+  const f = stats.fastest;
+  if (!f) return;
+  const box = document.getElementById('fastestBox');
+  box.classList.add('show');
+
+  const seed = f.speed * 7 + f.lane * 13;
+  const msg = FASTEST_MSGS[seed % FASTEST_MSGS.length];
+  const profileNames = { Carro: 'carro', Moto: 'moto', Medio: 'veículo médio', Caminhao: 'caminhão', Onibus: 'ônibus', Erro: '???' };
+  const tipo = profileNames[f.profile] || f.profile;
+
+  document.getElementById('fastestTitle').textContent = '🏎️ ' + msg;
+  document.getElementById('fastestDetails').textContent = `${tipo} · faixa ${f.lane} · ${f.size}m · passou às ${f.time} · multa de R$ 880,41 (gravíssima x3)`;
+  document.getElementById('fastestSpeed').textContent = f.speed + ' km/h';
 }
 
 async function update() {
@@ -272,14 +322,16 @@ async function update() {
       document.getElementById('maxFine').textContent = pct + '% acima — tomou multa';
     }
 
+    updateFastest(s);
+
     // hour chart
     const hours = Object.entries(s.vehiclesPerHour).sort((a, b) => a[0].localeCompare(b[0]));
-    const maxH = Math.max(...hours.map(h => h[1]), 1);
+    const maxHr = Math.max(...hours.map(h => h[1]), 1);
     const totalV = hours.reduce((s, h) => s + h[1], 0) || 1;
     document.getElementById('hourChart').innerHTML = hours.map(([hr, v]) => {
       const pct = (v / totalV * 100).toFixed(1);
       const active = hourFilter === hr ? ' active' : (hourFilter ? ' dimmed' : '');
-      return `<div class="bar-row${active}" data-hour="${esc(hr)}" onclick="toggleHour('${esc(hr)}')"><div class="bar-label">${esc(hr)}h</div><div class="bar-track"><div class="bar-fill" style="width:${num(v/maxH*100)}%"></div><div class="bar-pct">${pct}%</div></div><div class="bar-val">${num(v)}</div></div>`;
+      return `<div class="bar-row${active}" data-hour="${esc(hr)}" onclick="toggleHour('${esc(hr)}')"><div class="bar-label">${esc(hr)}h</div><div class="bar-track"><div class="bar-fill" style="width:${num(v/maxHr*100)}%"></div><div class="bar-pct">${pct}%</div></div><div class="bar-val">${num(v)}</div></div>`;
     }).join('');
 
     // profile chart

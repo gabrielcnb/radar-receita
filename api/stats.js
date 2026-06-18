@@ -37,6 +37,7 @@ function processLog(raw) {
   let totalVehicles = 0;
   let speedTotal = 0;
   let maxSpeed = 0;
+  let fastest = null;
   let redLightCycles = 0;
   const profiles = {};
   const lanes = {};
@@ -56,7 +57,11 @@ function processLog(raw) {
 
       totalVehicles++;
       speedTotal += speed;
-      if (speed > maxSpeed) maxSpeed = speed;
+      if (speed > maxSpeed) {
+        maxSpeed = speed;
+        const time = timestamp.split(" ")[1]?.split(".")[0] || "";
+        fastest = { speed, lane, profile, size: parseFloat(velMatch[5]), time };
+      }
       profiles[profile] = (profiles[profile] || 0) + 1;
       lanes[lane] = (lanes[lane] || 0) + 1;
 
@@ -107,6 +112,7 @@ function processLog(raw) {
       estimatedRevenue: Math.round((totalSpeedFines + totalRedFines) * 100) / 100,
       avgSpeed: totalVehicles > 0 ? Math.round((speedTotal / totalVehicles) * 10) / 10 : 0,
       maxSpeed,
+      fastest,
       vehiclesPerHour,
     },
     recentFeed: recentFeed.slice(-30).reverse(),
