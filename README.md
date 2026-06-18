@@ -34,3 +34,13 @@ npm start
 ## números típicos (1 dia)
 
 ~17k veículos, ~20 multas de velocidade, ~680 ciclos de sinal vermelho, ~R$ 34k receita estimada.
+
+---
+
+## english
+
+real-time revenue estimator for a single speed camera in campinas, brazil.
+
+an exposed EGB Systems camera panel leaks Ritux detection logs — every vehicle passing the sensor is logged with speed, size, profile, and lane. this scraper parses ~17k+ daily detections and estimates how much the government collects in fines from one intersection.
+
+speed limit is 50 km/h. INMETRO tolerance is -7 km/h. fines follow the brazilian traffic code (CTB): R$ 130 for mild speeding, up to R$ 880 for severe. red light violations are R$ 293 each. a typical day generates ~R$ 34k in estimated fines — roughly R$ 12M/year from a single camera.
