@@ -4,8 +4,6 @@ real-time revenue estimation from a single speed camera in campinas, brazil.
 
 scrapes live detection logs from an [exposed EGB Systems panel](http://191.246.88.18:5000/) — every vehicle that passes the sensor is logged with speed, size, profile, and lane. the scraper parses ~17k+ daily detections to estimate how much one intersection generates in fines.
 
-![screenshot](https://github.com/user-attachments/assets/placeholder.png)
-
 ## what it does
 
 - scrapes the camera's Ritux detection log every 30 seconds
