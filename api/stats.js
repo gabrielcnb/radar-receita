@@ -116,7 +116,30 @@ function processLog(raw) {
   };
 }
 
+const EMPTY = {
+  today: null,
+  lastScrape: null,
+  lastError: null,
+  stats: { totalVehicles: 0, profiles: {}, lanes: {}, speedViolations: { up20: 0, up50: 0, over50: 0 }, redLightCycles: 0, estimatedRevenue: 0, avgSpeed: 0, maxSpeed: 0, vehiclesPerHour: {} },
+  recentFeed: [],
+  fines: FINES,
+  speedLimit: SPEED_LIMIT,
+  tolerance: TOLERANCE,
+};
+
 module.exports = async function handler(req, res) {
+  if (req.method !== "GET") {
+    res.setHeader("Allow", "GET");
+    return res.status(405).json({ error: "method not allowed" });
+  }
+
+  const origin = req.headers.origin || "";
+  const host = req.headers.host || "";
+  const allowedOrigins = [`https://${host}`, `http://${host}`];
+  if (origin && !allowedOrigins.includes(origin)) {
+    return res.status(403).json({ error: "forbidden" });
+  }
+
   try {
     const today = getToday();
     const logs = await fetchAvailableLogs(today);
@@ -126,15 +149,7 @@ module.exports = async function handler(req, res) {
     res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=60");
     res.json(result);
   } catch (e) {
-    res.status(502).json({
-      today: getToday(),
-      lastScrape: null,
-      lastError: e.message,
-      stats: { totalVehicles: 0, profiles: {}, lanes: {}, speedViolations: { up20: 0, up50: 0, over50: 0 }, redLightCycles: 0, estimatedRevenue: 0, avgSpeed: 0, maxSpeed: 0, vehiclesPerHour: {} },
-      recentFeed: [],
-      fines: FINES,
-      speedLimit: SPEED_LIMIT,
-      tolerance: TOLERANCE,
-    });
+    const safeError = e.name === "TimeoutError" ? "camera timeout" : "camera unreachable";
+    res.status(502).json({ ...EMPTY, today: getToday(), lastError: safeError });
   }
 };

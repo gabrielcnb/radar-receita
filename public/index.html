@@ -137,25 +137,28 @@ async function update() {
       document.getElementById('maxFine').textContent = pct + '% acima do limite';
     }
 
+    function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+    function num(n) { return Number.isFinite(n) ? n : 0; }
+
     // hour chart
     const hours = Object.entries(s.vehiclesPerHour).sort((a, b) => a[0].localeCompare(b[0]));
     const maxH = Math.max(...hours.map(h => h[1]), 1);
     document.getElementById('hourChart').innerHTML = hours.map(([h, v]) =>
-      `<div class="bar-row"><div class="bar-label">${h}h</div><div class="bar-track"><div class="bar-fill" style="width:${(v/maxH*100)}%"></div></div><div class="bar-val">${v}</div></div>`
+      `<div class="bar-row"><div class="bar-label">${esc(h)}h</div><div class="bar-track"><div class="bar-fill" style="width:${num(v/maxH*100)}%"></div></div><div class="bar-val">${num(v)}</div></div>`
     ).join('');
 
     // profile chart
     const profs = Object.entries(s.profiles).sort((a, b) => b[1] - a[1]);
     const maxP = Math.max(...profs.map(p => p[1]), 1);
     document.getElementById('profileChart').innerHTML = profs.map(([p, v]) =>
-      `<div class="bar-row"><div class="bar-label">${p}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/maxP*100)}%"></div></div><div class="bar-val">${v}</div></div>`
+      `<div class="bar-row"><div class="bar-label">${esc(p)}</div><div class="bar-track"><div class="bar-fill" style="width:${num(v/maxP*100)}%"></div></div><div class="bar-val">${num(v)}</div></div>`
     ).join('');
 
     // feed
     document.getElementById('feed').innerHTML = d.recentFeed.map(v => {
       const cls = v.violation ? ' class="violation"' : '';
-      const tag = v.violation ? `<span class="violation">${v.violation}</span>` : '';
-      return `<tr><td>${v.time}</td><td>${v.lane}</td><td class="speed"${cls}>${v.speed} km/h</td><td>${v.profile}</td><td>${v.size}m</td><td>${tag}</td></tr>`;
+      const tag = v.violation ? `<span class="violation">${esc(v.violation)}</span>` : '';
+      return `<tr><td>${esc(v.time)}</td><td>${num(v.lane)}</td><td class="speed"${cls}>${num(v.speed)} km/h</td><td>${esc(v.profile)}</td><td>${num(v.size)}m</td><td>${tag}</td></tr>`;
     }).join('');
 
     const ago = Math.round((Date.now() - new Date(d.lastScrape).getTime()) / 1000);
