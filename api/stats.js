@@ -1,7 +1,4 @@
-const http = require("http");
-
-const CAMERA_HOST = "191.246.88.18";
-const CAMERA_PORT = 5000;
+const BASE = "http://191.246.88.18:5000";
 const SPEED_LIMIT = 50;
 const TOLERANCE = 7;
 
@@ -20,43 +17,19 @@ function getToday() {
   return `${y}-${m}-${day}`;
 }
 
-function fetchAvailableLogs(datePath) {
-  return new Promise((resolve, reject) => {
-    const req = http.get(
-      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/ritux_logs/${datePath}`, timeout: 10_000, insecureHTTPParser: true },
-      (res) => {
-        const chunks = [];
-        res.on("data", (c) => chunks.push(c));
-        res.on("end", () => {
-          const html = Buffer.concat(chunks).toString("utf-8");
-          const files = [];
-          const re = /download_ritux_log\/[^/]+\/([^"]+\.log)/g;
-          let m;
-          while ((m = re.exec(html))) files.push(m[1]);
-          resolve(files);
-        });
-        res.on("error", reject);
-      }
-    );
-    req.on("error", reject);
-    req.on("timeout", () => { req.destroy(); reject(new Error("timeout")); });
-  });
+async function fetchAvailableLogs(datePath) {
+  const res = await fetch(`${BASE}/ritux_logs/${datePath}`, { signal: AbortSignal.timeout(10_000) });
+  const html = await res.text();
+  const files = [];
+  const re = /download_ritux_log\/[^/]+\/([^"]+\.log)/g;
+  let m;
+  while ((m = re.exec(html))) files.push(m[1]);
+  return files;
 }
 
-function fetchLog(datePath, logFile) {
-  return new Promise((resolve, reject) => {
-    const req = http.get(
-      { host: CAMERA_HOST, port: CAMERA_PORT, path: `/download_ritux_log/${datePath}/${logFile}`, timeout: 20_000, insecureHTTPParser: true },
-      (res) => {
-        const chunks = [];
-        res.on("data", (c) => chunks.push(c));
-        res.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
-        res.on("error", reject);
-      }
-    );
-    req.on("error", reject);
-    req.on("timeout", () => { req.destroy(); reject(new Error("timeout")); });
-  });
+async function fetchLog(datePath, logFile) {
+  const res = await fetch(`${BASE}/download_ritux_log/${datePath}/${logFile}`, { signal: AbortSignal.timeout(25_000) });
+  return await res.text();
 }
 
 function processLog(raw) {

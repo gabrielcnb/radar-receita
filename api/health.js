@@ -1,5 +1,3 @@
-const http = require("http");
-
 function getToday() {
   const d = new Date(Date.now() - 3 * 3600_000);
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
@@ -7,24 +5,13 @@ function getToday() {
 
 module.exports = async function handler(req, res) {
   try {
-    const check = await new Promise((resolve, reject) => {
-      const r = http.get(
-        { host: "191.246.88.18", port: 5000, path: `/ritux_logs/${getToday()}`, timeout: 8_000 },
-        (resp) => {
-          let data = "";
-          resp.on("data", (c) => (data += c));
-          resp.on("end", () => resolve({ status: resp.statusCode, hasLogs: data.includes(".log") }));
-          resp.on("error", reject);
-        }
-      );
-      r.on("error", reject);
-      r.on("timeout", () => { r.destroy(); reject(new Error("timeout")); });
-    });
+    const resp = await fetch(`http://191.246.88.18:5000/ritux_logs/${getToday()}`, { signal: AbortSignal.timeout(8_000) });
+    const html = await resp.text();
 
     res.json({
-      status: check.hasLogs ? "ok" : "no_logs",
+      status: html.includes(".log") ? "ok" : "no_logs",
       cameraReachable: true,
-      httpStatus: check.status,
+      httpStatus: resp.status,
       today: getToday(),
     });
   } catch (e) {
