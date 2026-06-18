@@ -1,58 +1,36 @@
 # radar-receita
 
-real-time revenue estimation from a single speed camera in campinas, brazil.
+scraper que puxa logs em tempo real de uma câmera de velocidade aberta em campinas e estima quanta receita ela gera em multas.
 
-scrapes live detection logs from an [exposed EGB Systems panel](http://191.246.88.18:5000/) — every vehicle that passes the sensor is logged with speed, size, profile, and lane. the scraper parses ~17k+ daily detections to estimate how much one intersection generates in fines.
+painel da câmera: http://191.246.88.18:5000/
 
-## what it does
+## como funciona
 
-- scrapes the camera's Ritux detection log every 30 seconds
-- parses each vehicle detection: speed, profile (car/motorcycle/truck/bus), lane, timestamp
-- identifies speed violations using INMETRO tolerance rules (-7 km/h for speeds < 100)
-- tracks red light enforcement cycles
-- calculates estimated revenue using official CTB fine values
-- serves a minimal dashboard with live feed
+a câmera (EGB Systems / Engebras MMV544) expõe um painel web com logs do sistema Ritux. cada veículo que passa é registrado com velocidade, perfil, faixa e tamanho. o scraper parseia esses logs, aplica as regras de tolerância do INMETRO e calcula a receita estimada com os valores oficiais do CTB.
 
-## the camera
+av. ruy rodriguez x terminal santa lucia, campinas-sp. limite 50 km/h, 3 faixas ativas.
 
-| | |
+## multas
+
+| infração | valor |
 |---|---|
-| **location** | av. ruy rodriguez x terminal santa lucia, campinas-sp |
-| **speed limit** | 50 km/h |
-| **equipment** | MMV544 Engebras, serial 0363/2021 |
-| **lanes** | 3 active (of 8 configured) |
-| **operation** | 24/7 speed + red light + bus lane + prohibited turn |
+| velocidade até 20% acima | R$ 130,16 |
+| velocidade 20-50% acima | R$ 195,23 |
+| velocidade >50% acima | R$ 880,41 |
+| avanço sinal vermelho | R$ 293,47 |
 
-## fine values (CTB)
+## rodar local
 
-| violation | severity | fine |
-|---|---|---|
-| speed up to 20% over | media | R$ 130.16 |
-| speed 20-50% over | grave | R$ 195.23 |
-| speed >50% over | gravissima x3 | R$ 880.41 |
-| red light | gravissima | R$ 293.47 |
-
-## run locally
-
-```bash
+```
 npm install
 npm start
-# http://localhost:3000
 ```
 
 ## api
 
-- `GET /api/stats` — full stats, breakdown, and live feed
-- `GET /api/health` — scraper health, uptime, error count
+- `GET /api/stats` — dados completos + feed
+- `GET /api/health` — status da câmera
 
-## data
+## números típicos (1 dia)
 
-no personal data is collected or exposed. license plates appear in the raw camera logs but are discarded during parsing — the scraper only extracts aggregate vehicle data (speed, size, profile, lane).
-
-## numbers (sample day)
-
-- ~17,500 vehicles
-- ~20 speed violations
-- ~680 red light enforcement cycles
-- estimated daily revenue: ~R$ 34,000
-- projected annual revenue: **~R$ 12M** from a single camera
+~17k veículos, ~20 multas de velocidade, ~680 ciclos de sinal vermelho, ~R$ 34k receita estimada.
