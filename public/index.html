@@ -3,129 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>radar-receita</title>
+<title>radar-receita 🇧🇷</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  background: #111;
-  color: #ccc;
+  background: #fafaf9;
+  color: #1a1a1a;
   font: 13px/1.6 'SF Mono', 'Menlo', 'Consolas', monospace;
   padding: 32px;
   max-width: 860px;
   margin: 0 auto;
 }
-h1 { font-size: 14px; color: #666; font-weight: normal; margin-bottom: 24px; }
-h1 b { color: #ccc; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: #222; border: 1px solid #222; margin-bottom: 24px; }
-.cell { background: #111; padding: 12px 16px; transition: background 0.2s; cursor: default; }
-.cell:hover { background: #161616; }
-.cell .label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-.cell .val { font-size: 22px; color: #fff; font-weight: bold; margin-top: 2px; }
-.cell .val.green { color: #4ade80; }
-.cell .val.red { color: #f87171; }
-.cell .val.yellow { color: #fbbf24; }
-.cell .sub { font-size: 11px; color: #555; margin-top: 2px; }
-.delta { font-size: 11px; color: #4ade80; margin-left: 6px; font-weight: normal; opacity: 0; transition: opacity 0.3s; }
+h1 { font-size: 14px; color: #888; font-weight: normal; margin-bottom: 4px; }
+h1 b { color: #1a1a1a; }
+.subtitle { font-size: 11px; color: #aaa; margin-bottom: 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: #e5e5e5; border: 1px solid #e5e5e5; margin-bottom: 24px; }
+.cell { background: #fafaf9; padding: 12px 16px; transition: background 0.2s; cursor: default; }
+.cell:hover { background: #f5f5f4; }
+.cell .label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+.cell .desc { font-size: 10px; color: #bbb; margin-top: -1px; }
+.cell .val { font-size: 22px; color: #1a1a1a; font-weight: bold; margin-top: 2px; }
+.cell .val.green { color: #16a34a; }
+.cell .val.red { color: #dc2626; }
+.cell .val.yellow { color: #ca8a04; }
+.cell .sub { font-size: 11px; color: #999; margin-top: 2px; }
+.delta { font-size: 11px; color: #16a34a; margin-left: 6px; font-weight: normal; opacity: 0; transition: opacity 0.3s; }
 .delta.show { opacity: 1; }
-.delta.neg { color: #f87171; }
+.delta.neg { color: #dc2626; }
 section { margin-bottom: 24px; }
-section h2 { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-.filter-hint { font-size: 11px; color: #333; margin-left: 8px; font-weight: normal; text-transform: none; letter-spacing: 0; }
-.filter-active { color: #4ade80; }
-.filter-clear { color: #555; cursor: pointer; margin-left: 8px; font-size: 11px; }
-.filter-clear:hover { color: #ccc; }
+section h2 { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.filter-hint { font-size: 11px; color: #ccc; margin-left: 8px; font-weight: normal; text-transform: none; letter-spacing: 0; }
+.filter-active { color: #16a34a; }
+.filter-clear { color: #999; cursor: pointer; margin-left: 8px; font-size: 11px; }
+.filter-clear:hover { color: #1a1a1a; }
 table { width: 100%; border-collapse: collapse; }
-th, td { text-align: left; padding: 4px 12px 4px 0; font-size: 12px; border-bottom: 1px solid #1a1a1a; }
-th { color: #444; font-weight: normal; cursor: pointer; user-select: none; transition: color 0.15s; }
-th:hover { color: #999; }
-th.sorted { color: #ccc; }
+th, td { text-align: left; padding: 4px 12px 4px 0; font-size: 12px; border-bottom: 1px solid #f0f0ef; }
+th { color: #bbb; font-weight: normal; cursor: pointer; user-select: none; transition: color 0.15s; }
+th:hover { color: #666; }
+th.sorted { color: #1a1a1a; }
 th .arrow { font-size: 10px; margin-left: 2px; }
-td { color: #999; }
+td { color: #666; }
 td.speed { font-variant-numeric: tabular-nums; }
-.violation { color: #f87171; font-weight: bold; }
+.violation { color: #dc2626; font-weight: bold; }
 .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; cursor: pointer; transition: opacity 0.15s; }
 .bar-row:hover { opacity: 1 !important; }
-.bar-row:hover .bar-fill { background: #555; }
-.bar-row.active .bar-fill { background: #4ade80; }
-.bar-row.active .bar-label, .bar-row.active .bar-val { color: #4ade80; }
-.bar-row.dimmed { opacity: 0.35; }
-.bar-label { width: 60px; color: #555; text-align: right; transition: color 0.15s; }
-.bar-track { flex: 1; height: 8px; background: #1a1a1a; position: relative; }
-.bar-fill { height: 100%; background: #333; transition: background 0.15s, width 0.4s ease-out; }
-.bar-pct { position: absolute; right: 4px; top: -14px; font-size: 10px; color: #555; opacity: 0; transition: opacity 0.15s; }
+.bar-row:hover .bar-fill { background: #999; }
+.bar-row.active .bar-fill { background: #16a34a; }
+.bar-row.active .bar-label, .bar-row.active .bar-val { color: #16a34a; }
+.bar-row.dimmed { opacity: 0.3; }
+.bar-label { width: 60px; color: #999; text-align: right; transition: color 0.15s; }
+.bar-track { flex: 1; height: 8px; background: #ececec; position: relative; }
+.bar-fill { height: 100%; background: #ccc; transition: background 0.15s, width 0.4s ease-out; }
+.bar-pct { position: absolute; right: 4px; top: -14px; font-size: 10px; color: #999; opacity: 0; transition: opacity 0.15s; }
 .bar-row:hover .bar-pct { opacity: 1; }
-.bar-val { width: 50px; color: #666; font-variant-numeric: tabular-nums; transition: color 0.15s; }
-.status { font-size: 11px; color: #333; margin-top: 16px; }
-.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #333; margin-right: 4px; }
-.dot.on { background: #4ade80; }
-.dot.warn { background: #fbbf24; }
+.bar-val { width: 50px; color: #999; font-variant-numeric: tabular-nums; transition: color 0.15s; }
+.status { font-size: 11px; color: #ccc; margin-top: 16px; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ddd; margin-right: 4px; }
+.dot.on { background: #16a34a; }
+.dot.warn { background: #ca8a04; }
 tr.new-row td { animation: flash 1.5s ease-out; }
-@keyframes flash { 0% { color: #4ade80; } 100% { color: #999; } }
-tr.violation-row td { transition: color 0.15s; }
+@keyframes flash { 0% { color: #16a34a; } 100% { color: #666; } }
 .feed-filter { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-.feed-tag { font-size: 11px; padding: 2px 8px; background: #1a1a1a; color: #555; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
-.feed-tag:hover { color: #999; border-color: #333; }
-.feed-tag.active { color: #ccc; border-color: #444; background: #222; }
+.feed-tag { font-size: 11px; padding: 2px 8px; background: #f0f0ef; color: #999; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+.feed-tag:hover { color: #666; border-color: #ddd; }
+.feed-tag.active { color: #1a1a1a; border-color: #bbb; background: #e5e5e5; }
+.banner { font-size: 11px; color: #bbb; margin-bottom: 20px; padding: 8px 12px; background: #f5f5f4; border-left: 3px solid #16a34a; }
+.banner b { color: #888; }
+.footer { font-size: 10px; color: #ccc; margin-top: 32px; text-align: center; }
 </style>
 </head>
 <body>
 
-<h1><b>radar-receita</b> — av. ruy rodriguez x terminal santa lucia, campinas-sp</h1>
+<h1>🇧🇷 <b>radar-receita</b> — a indústria da multa em tempo real</h1>
+<div class="subtitle">av. ruy rodriguez × terminal santa lucia, campinas-sp · 1 radar, milhões em multas</div>
+
+<div class="banner">
+  <b>como funciona:</b> esse radar tem o painel de controle aberto na internet. a gente puxa os logs de detecção em tempo real e calcula quanto o governo tá faturando só com essa esquina.
+</div>
 
 <div class="grid">
   <div class="cell">
-    <div class="label">veiculos hoje</div>
+    <div class="label">veículos hoje</div>
+    <div class="desc">total que passou pelo radar</div>
     <div class="val" id="total">—<span class="delta" id="totalDelta"></span></div>
     <div class="sub" id="perHour">—/h</div>
   </div>
   <div class="cell">
     <div class="label">receita estimada</div>
+    <div class="desc">só hoje, só esse radar</div>
     <div class="val green" id="revenue">—<span class="delta" id="revDelta"></span></div>
-    <div class="sub" id="revenueYear">—/ano projecao</div>
+    <div class="sub" id="revenueYear">—/ano projeção</div>
   </div>
   <div class="cell">
     <div class="label">multas velocidade</div>
+    <div class="desc">acima de 57 km/h (50 + 7 tolerância)</div>
     <div class="val yellow" id="speedFines">—</div>
     <div class="sub" id="speedBreak">—</div>
   </div>
   <div class="cell">
-    <div class="label">ciclos sinal vermelho</div>
+    <div class="label">avanço sinal vermelho</div>
+    <div class="desc">eventos "Multando!" no log</div>
     <div class="val red" id="redLight">—</div>
-    <div class="sub">~15% geram multa</div>
+    <div class="sub">~15% viram multa de fato</div>
   </div>
   <div class="cell">
-    <div class="label">vel. media</div>
+    <div class="label">velocidade média</div>
+    <div class="desc">de todos os veículos do dia</div>
     <div class="val" id="avgSpeed">—</div>
     <div class="sub">limite: 50 km/h</div>
   </div>
   <div class="cell">
-    <div class="label">vel. maxima</div>
+    <div class="label">maior velocidade</div>
+    <div class="desc">o mais rápido que passou hoje</div>
     <div class="val red" id="maxSpeed">—</div>
     <div class="sub" id="maxFine">—</div>
   </div>
 </div>
 
 <section>
-  <h2>volume por hora <span class="filter-hint" id="hourHint">clique pra filtrar</span></h2>
+  <h2>volume por hora <span class="filter-hint" id="hourHint">clique pra filtrar o feed</span></h2>
   <div id="hourChart"></div>
 </section>
 
 <section>
-  <h2>perfil dos veiculos</h2>
+  <h2>perfil dos veículos</h2>
   <div id="profileChart"></div>
 </section>
 
 <section>
-  <h2>feed ao vivo <span class="filter-hint" id="feedHint">ultimos 30</span></h2>
+  <h2>feed ao vivo <span class="filter-hint" id="feedHint">últimos 30</span></h2>
   <div class="feed-filter" id="feedFilter"></div>
   <table>
     <thead><tr>
       <th data-col="time">hora <span class="arrow"></span></th>
-      <th data-col="lane">fx <span class="arrow"></span></th>
-      <th data-col="speed">vel <span class="arrow"></span></th>
-      <th data-col="profile">perfil <span class="arrow"></span></th>
-      <th data-col="size">tam <span class="arrow"></span></th>
-      <th data-col="violation"><span class="arrow"></span></th>
+      <th data-col="lane">faixa <span class="arrow"></span></th>
+      <th data-col="speed">velocidade <span class="arrow"></span></th>
+      <th data-col="profile">tipo <span class="arrow"></span></th>
+      <th data-col="size">tamanho <span class="arrow"></span></th>
+      <th data-col="violation">infração <span class="arrow"></span></th>
     </tr></thead>
     <tbody id="feed"></tbody>
   </table>
@@ -134,6 +149,10 @@ tr.violation-row td { transition: color 0.15s; }
 <div class="status">
   <span class="dot" id="dot"></span>
   <span id="statusText">conectando...</span>
+</div>
+
+<div class="footer">
+  🇧🇷 indústria da multa transparente · dados públicos · nenhum dado pessoal coletado
 </div>
 
 <script>
@@ -160,7 +179,7 @@ function showDelta(id, cur, old) {
 function renderFeed(data, newKeys) {
   const filtered = data.filter(v => {
     if (hourFilter && !v.time.startsWith(hourFilter + ':')) return false;
-    if (profileFilter && v.profile !== profileFilter) return false;
+    if (profileFilter && profileFilter !== '__violations' && v.profile !== profileFilter) return false;
     return true;
   });
 
@@ -177,8 +196,7 @@ function renderFeed(data, newKeys) {
   document.getElementById('feed').innerHTML = sorted.map(v => {
     const key = v.time + '-' + v.lane + '-' + v.speed;
     const isNew = newKeys && newKeys.has(key);
-    const cls = v.violation ? ' class="violation-row"' : '';
-    const rowCls = isNew ? ' class="new-row"' : cls;
+    const rowCls = isNew ? ' class="new-row"' : '';
     const tag = v.violation ? `<span class="violation">${esc(v.violation)}</span>` : '';
     return `<tr${rowCls}><td>${esc(v.time)}</td><td>${num(v.lane)}</td><td class="speed${v.violation ? ' violation' : ''}">${num(v.speed)} km/h</td><td>${esc(v.profile)}</td><td>${num(v.size)}m</td><td>${tag}</td></tr>`;
   }).join('');
@@ -188,10 +206,11 @@ function renderFeed(data, newKeys) {
   if (hourFilter || profileFilter) {
     const parts = [];
     if (hourFilter) parts.push(hourFilter + 'h');
-    if (profileFilter) parts.push(profileFilter);
-    hint.innerHTML = `<span class="filter-active">${parts.join(' + ')}</span> — ${count} veiculos <span class="filter-clear" onclick="clearFilters()">[limpar]</span>`;
+    if (profileFilter === '__violations') parts.push('multas');
+    else if (profileFilter) parts.push(profileFilter);
+    hint.innerHTML = `<span class="filter-active">${parts.join(' + ')}</span> — ${count} veículos <span class="filter-clear" onclick="clearFilters()">[limpar]</span>`;
   } else {
-    hint.textContent = 'ultimos ' + count;
+    hint.textContent = 'últimos ' + count;
   }
 }
 
@@ -223,9 +242,6 @@ async function update() {
     const d = await r.json();
     const s = d.stats;
 
-    showDelta('totalDelta', s.totalVehicles, prev.total);
-    showDelta('revDelta', Math.round(s.estimatedRevenue), Math.round(prev.revenue));
-
     document.getElementById('total').innerHTML = s.totalVehicles.toLocaleString('pt-BR') + '<span class="delta" id="totalDelta"></span>';
     showDelta('totalDelta', s.totalVehicles, prev.total);
 
@@ -240,11 +256,11 @@ async function update() {
 
     const daily = s.estimatedRevenue * (24 / (h || 1));
     const yearly = daily * 365;
-    document.getElementById('revenueYear').textContent = 'R$ ' + Math.round(yearly / 1000).toLocaleString('pt-BR') + 'k/ano projecao';
+    document.getElementById('revenueYear').textContent = 'R$ ' + Math.round(yearly / 1000).toLocaleString('pt-BR') + 'k/ano projeção';
 
     const totalSpeed = s.speedViolations.up20 + s.speedViolations.up50 + s.speedViolations.over50;
     document.getElementById('speedFines').textContent = totalSpeed;
-    document.getElementById('speedBreak').textContent = s.speedViolations.up20 + ' leve / ' + s.speedViolations.up50 + ' grave / ' + s.speedViolations.over50 + ' gravissima';
+    document.getElementById('speedBreak').textContent = s.speedViolations.up20 + ' leve / ' + s.speedViolations.up50 + ' grave / ' + s.speedViolations.over50 + ' gravíssima';
 
     document.getElementById('redLight').textContent = s.redLightCycles.toLocaleString('pt-BR');
     document.getElementById('avgSpeed').textContent = s.avgSpeed + ' km/h';
@@ -253,7 +269,7 @@ async function update() {
     const maxConsidered = s.maxSpeed - d.tolerance;
     if (maxConsidered > d.speedLimit) {
       const pct = ((maxConsidered - d.speedLimit) / d.speedLimit * 100).toFixed(0);
-      document.getElementById('maxFine').textContent = pct + '% acima do limite';
+      document.getElementById('maxFine').textContent = pct + '% acima — tomou multa';
     }
 
     // hour chart
@@ -279,10 +295,10 @@ async function update() {
     filterEl.innerHTML = profs.map(([p]) =>
       `<span class="feed-tag${profileFilter === p ? ' active' : ''}" onclick="toggleProfile('${esc(p)}')">${esc(p)}</span>`
     ).join('') + (d.recentFeed.some(v => v.violation)
-      ? `<span class="feed-tag${profileFilter === '__violations' ? ' active' : ''}" onclick="toggleProfile('__violations')" style="color:#f87171">multas</span>`
+      ? `<span class="feed-tag${profileFilter === '__violations' ? ' active' : ''}" onclick="toggleProfile('__violations')" style="color:#dc2626">infrações</span>`
       : '');
 
-    // feed with new-row detection
+    // feed
     const newKeys = new Set();
     const curKeys = new Set();
     d.recentFeed.forEach(v => {
@@ -307,13 +323,13 @@ async function update() {
 
     if (!scrapeOk) {
       document.getElementById('dot').className = 'dot';
-      document.getElementById('statusText').textContent = `scrape falhou — ultimo sucesso ${ago}s atras`;
+      document.getElementById('statusText').textContent = `scrape falhou — último sucesso ${ago}s atrás`;
     } else if (stale) {
       document.getElementById('dot').className = 'dot warn';
-      document.getElementById('statusText').textContent = `dados possivelmente stale — ultimo scrape ${ago}s atras`;
+      document.getElementById('statusText').textContent = `dados possivelmente stale — último scrape ${ago}s atrás`;
     } else {
       document.getElementById('dot').className = 'dot on';
-      document.getElementById('statusText').textContent = `live — scrape ${ago}s atras — ${d.today}`;
+      document.getElementById('statusText').textContent = `ao vivo — scrape ${ago}s atrás — ${d.today}`;
     }
   } catch (e) {
     document.getElementById('dot').className = 'dot';
@@ -329,8 +345,6 @@ function toggleHour(hr) {
       r.classList.add(r.dataset.hour === hourFilter ? 'active' : 'dimmed');
     }
   });
-  const hint = document.getElementById('hourHint');
-  hint.textContent = hourFilter ? '' : 'clique pra filtrar';
   renderFeed(feedData);
 }
 
@@ -342,9 +356,8 @@ function toggleProfile(p) {
   }
   document.querySelectorAll('.feed-tag').forEach(t => t.classList.remove('active'));
   if (profileFilter) {
-    const tags = document.querySelectorAll('.feed-tag');
-    tags.forEach(t => {
-      if ((profileFilter === '__violations' && t.textContent === 'multas') || t.textContent === profileFilter) {
+    document.querySelectorAll('.feed-tag').forEach(t => {
+      if ((profileFilter === '__violations' && t.textContent === 'infrações') || t.textContent === profileFilter) {
         t.classList.add('active');
       }
     });
