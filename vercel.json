@@ -1,0 +1,15 @@
+{
+  "functions": {
+    "api/stats.js": {
+      "maxDuration": 30
+    },
+    "api/health.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/stats", "destination": "/api/stats" },
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
+}
